@@ -2,7 +2,7 @@ import requests
 import re
 class test:
     def __init__(self):
-        print("初始化")
+        print("初始化jxhczzz")
 
     def getHtmlText(self,url):
         try:
