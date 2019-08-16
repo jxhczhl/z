@@ -1,4 +1,5 @@
 import requests
+import re
 class test:
     def __init__(self):
         print("初始化")
@@ -8,6 +9,12 @@ class test:
             html=requests.get(url).text
         except:
             return None
+    def resultList(self,html):
+        for a in html:
+            print(a)
+
 a=test()
-a.getHtmlText("http://www.baidu.com")
+html=a.getHtmlText("http://www.baidu.com")
+resultlist=re.findAll(r'\d{3}-\d{7,8}(-\d{\d}?)')
+reslt=a.resultList(resultlist)
 
