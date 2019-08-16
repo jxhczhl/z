@@ -8,4 +8,6 @@ class test:
             html=requests.get(url).text
         except:
             return None
+a=test()
+a.getHtmlText("http://www.baidu.com")
 
