@@ -15,17 +15,27 @@ class Crack():
         self.BORDER = 6
         self.ERROR = 0
 
-
-    def open(self):
+    def open(self,goname,goemail,gocode):
         """
         打开浏览器 输入内容 点击登陆
         """
         self.browser.get(self.url)
         # 输入账号
-        # user = self.browser.find_element_by_xpath('//*[@name="user"]')
-        # user.send_keys(self.username)
+        name = self.browser.find_element_by_xpath('//*[@id="name"]')
+        name.send_keys(goname)
+        email=self.browser.find_element_by_xpath('//*[@id="email"]')
+        email.send_keys(goemail)
+        passwd = self.browser.find_element_by_xpath('//*[@id="passwd"]')
+        passwd.send_keys("hliang98")
+        repasswd = self.browser.find_element_by_xpath('//*[@id="repasswd"]')
+        repasswd.send_keys("hliang98")
+        self.browser.execute_script('document.getElementById("imtype").value="4"')
+        wechat = self.browser.find_element_by_xpath('//*[@id="wechat"]')
+        wechat.send_keys(goname)
+        code = self.browser.find_element_by_xpath('//*[@id="code"]')
+        code.send_keys(gocode)
         # 点击登陆
-        sleep(1)
+        sleep(0.5)
         login = self.browser.find_element_by_class_name('geetest_radar_tip_content')
         login.click()
 
@@ -43,31 +53,35 @@ class Crack():
         slider = self.browser.find_element_by_class_name(
             'geetest_slider_button')
         # 拖动滑块到指定位置
-        self.moveTo(slider, track,diff)
+        self.moveTo(slider, track, diff)
 
         # 重置
         # self.isReset()
 
     def checkRes(self):
         for i in range(3):
-            Status=self.isElementExist('//*[@id="embed-captcha"]/div/div[2]/div[2]/div/div[2]/span[1]')
-            if Status==True:
+            sleep(1)
+            Status = self.browser.find_element_by_xpath('//*[@id="embed-captcha"]/div/div[2]/div[2]/div/div[2]/span[1]').text
+            print(Status,"123123")
+            if Status == "验证成功":
                 print("滑块成功")
+                #滑块成功后就走你
+                # sleep(0.5)
+                # top=self.browser.find_element_by_xpath('//*[@id="tos"]')
+                # top.click()
+                # sleep(0.5)
+                # reg = self.browser.find_element_by_xpath('//*[@id="reg"]')
+                # reg.click()
                 return
-            Status=self.isElementExist('//*[@id="embed-captcha"]/div/div[2]/div[1]/div[3]/span[2]')
-            if Status==True:
-                print("怪物吃了,要重试")
+            else:
+                print("怪物吃了吧,要重试",Status)
+                sleep(1)
+                reset = self.browser.find_element_by_class_name('geetest_reset_tip_content')
+                reset.click()
                 self.crack()
-    def isElementExist(self,xpath):
-        flag = True
-        try:
-            texts = self.browser.find_element_by_xpath(xpath)
-            print(texts.text)
-            return flag
-        except Exception as e:
-            print(e)
-            flag = False
-            return flag
+        sleep(1)
+        self.browser.close()
+
     def getDiff(self):
         """
         name: 获取偏移量
@@ -109,7 +123,7 @@ class Crack():
         move = 0
         return track
 
-    def moveTo(self, slider, track,distance):
+    def moveTo(self, slider, track, distance):
         """
         name: 拖动滑块到指定位置
         :param slider: 滑块
@@ -118,10 +132,10 @@ class Crack():
         """
         ActionChains(self.browser).click_and_hold(slider).perform()
         # while track:
-            # x = random.choice(track)
-            # ActionChains(self.browser).move_by_offset(x, 0).perform()
-            # track.remove(x)
-        while distance>0:
+        # x = random.choice(track)
+        # ActionChains(self.browser).move_by_offset(x, 0).perform()
+        # track.remove(x)
+        while distance > 0:
             if distance > 40:
                 span = random.randint(19, 39)
             elif distance > 25:
@@ -188,7 +202,7 @@ class Crack():
         :return res:Image 可读取的图片信息
         """
         JS = 'return document.getElementsByClassName("' + \
-            target + '")[0].toDataURL("image/png");'
+             target + '")[0].toDataURL("image/png");'
         canvasData = self.browser.execute_script(JS)
         # 获取base64编码的图片信息
         im_base64 = canvasData.split(',')[1]
@@ -223,7 +237,8 @@ class Crack():
             for j in range(0, height):
                 pixel1 = image1.load()[i, j]
                 pixel2 = image2.load()[i, j]
-                if abs(pixel1[0] - pixel2[0]) > threshold or abs(pixel1[1] - pixel2[1]) > threshold or abs(pixel1[2] - pixel2[2]) > threshold:
+                if abs(pixel1[0] - pixel2[0]) > threshold or abs(pixel1[1] - pixel2[1]) > threshold or abs(
+                        pixel1[2] - pixel2[2]) > threshold:
                     distance = i
                     return distance
         print(distance)
@@ -231,6 +246,7 @@ class Crack():
 
 
 crack = Crack()
-crack.open()
+user="a0_0"
+crack.open("hliang"+user,user+"@stu.sqxy.edu.cn","m3Ll")
 crack.crack()
 crack.checkRes()
